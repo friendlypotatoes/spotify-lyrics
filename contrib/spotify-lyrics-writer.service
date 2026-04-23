@@ -1,0 +1,16 @@
+[Unit]
+Description=Write synced lyrics for eww (LRCLIB + playerctl)
+After=graphical-session.target
+
+[Service]
+Type=simple
+# Adjust paths if your clone is not ~/personal/spotify-lyrics
+WorkingDirectory=%h/personal/spotify-lyrics
+Environment=PATH=%h/.local/bin:%h/.cargo/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PLAYERCTL_PLAYER=spotify
+ExecStart=/usr/bin/env uv run python main.py --player spotify --lyrics-file %h/.local/state/spotify-lyrics.txt
+Restart=on-failure
+RestartSec=4
+
+[Install]
+WantedBy=default.target
