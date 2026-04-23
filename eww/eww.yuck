@@ -3,20 +3,21 @@
 
 (defpoll lyrics_preview_text
   :interval "250ms"
-  :initial "<span font_desc=\"Ubuntu 13\" foreground=\"#bac8d4\">—</span>"
+  :initial "<span font_desc=\"Ubuntu 13\">. . .</span>"
   `./scripts/poll-lyrics.sh`)
 
 (defwindow spotify_lyrics_preview
   :monitor 0
+  :class "spotify-lyrics-preview"
   :namespace "spotify-lyrics-preview"
   :stacking "overlay"
   :exclusive false
   :focusable "none"
   :geometry (geometry
-    :anchor "top right"
-    :x "-280px"
-    :y "3px"
-    :width "600px"
+    :anchor "top left"
+    :x "500px"
+    :y "4px"
+    :width "400px"
     :height "24px")
   (eventbox
     :class "spotify-lyrics-root"
