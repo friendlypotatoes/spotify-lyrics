@@ -31,7 +31,7 @@ window.spotify-lyrics-preview {
 
 .lyrics-spotify-body {
   background-color: transparent;
-  color: #bac8d4;
+  color: #fdfdfd;
   font-family: "Ubuntu", "Ubuntu Sans", sans-serif;
   font-size: 8px;
   font-weight: 700;
@@ -40,10 +40,10 @@ window.spotify-lyrics-preview {
 }
 
 .spotify-lyrics-root:hover .lyrics-spotify-body {
-  color: #e8eef5;
+  color: #fdfdfd;
 }
 
 .lyrics-spotify-body selection {
   background-color: #ffffff;
-  color: #e8eef5;
+  color: #fdfdfd;
 }
