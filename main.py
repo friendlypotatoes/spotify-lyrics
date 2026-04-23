@@ -224,15 +224,15 @@ def render_eww_markup(
     lines: list[LyricLine],
 ) -> str:
     if not lines:
-        return '<span font_desc="Ubuntu 13" foreground="#ffffff">No synced lyrics</span>'
+        return '<span font_desc="Ubuntu Bold 8" foreground="#ffffff">No synced lyrics</span>'
     if idx is None or idx < 0:
-        return '<span font_desc="Ubuntu 13" foreground="#ffffff">. . .</span>'
+        return '<span font_desc="Ubuntu Bold 8" foreground="#ffffff">. . .</span>'
     text = lines[idx].text.replace("\n", " ").strip()
     if not text:
-        return '<span font_desc="Ubuntu 13" foreground="#ffffff">. . .</span>'
+        return '<span font_desc="Ubuntu Bold 8" foreground="#ffffff">. . .</span>'
     if len(text) > 120:
         text = text[:117] + ". . ."
-    return f'<span font_desc="Ubuntu 13" foreground="#ffffff">{html.escape(text)}</span>'
+    return f'<span font_desc="Ubuntu Bold 8" foreground="#ffffff">{html.escape(text)}</span>'
 
 
 def write_atomic(path: str, content: str) -> None:
@@ -338,7 +338,7 @@ def main() -> None:
             lines = []
             last_sig = None
             idle_eww = (
-                '<span font_desc="Ubuntu 13" foreground="#ffffff">'
+                '<span font_desc="Ubuntu Bold 8" foreground="#ffffff">'
                 ". . . ."
                 "</span>"
             )
