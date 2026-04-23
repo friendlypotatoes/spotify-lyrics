@@ -1,0 +1,27 @@
+/* No global `* { all: unset }` — it clears label foreground and can yield a solid black box. */
+
+window {
+  background-color: transparent;
+  border-radius: 12px;
+}
+
+.spotify-lyrics-root {
+  background-color: transparent;
+}
+
+.lyrics-spotify-body {
+  background-color: transparent;
+  color: #bac8d4;
+  font-family: "Ubuntu", "Ubuntu Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  border-radius: 12px;
+}
+
+.lyrics-spotify-body selection {
+  background-color: transparent;
+  color: #bac8d4;
+  border-radius: 12px;
+}

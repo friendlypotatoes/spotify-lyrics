@@ -1,0 +1,32 @@
+;; Top-right strip — Wayland: :focusable must be "none" | "exclusive" | "ondemand", not false.
+;; Hyprland transparency: layerrule = ignorezero, ^(spotify-lyrics-preview)$   (namespace from :namespace)
+
+(defpoll lyrics_preview_text
+  :interval "250ms"
+  :initial "<span font_desc=\"Ubuntu 13\" foreground=\"#bac8d4\">—</span>"
+  `./scripts/poll-lyrics.sh`)
+
+(defwindow spotify_lyrics_preview
+  :monitor 0
+  :namespace "spotify-lyrics-preview"
+  :stacking "overlay"
+  :exclusive false
+  :focusable "none"
+  :geometry (geometry
+    :anchor "top right"
+    :x "-280px"
+    :y "3px"
+    :width "600px"
+    :height "24px")
+  (eventbox
+    :class "spotify-lyrics-root"
+    (label
+      :class "lyrics-spotify-body"
+      :markup lyrics_preview_text
+      :wrap false
+      :truncate true
+      :hexpand true
+      :halign "fill"
+      :valign "center"
+      :xalign 0
+      :yalign 0.5)))
