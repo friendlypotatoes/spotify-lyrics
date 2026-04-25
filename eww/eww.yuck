@@ -1,7 +1,17 @@
-(defpoll lyrics_preview_text
+(defpoll lyrics_text
   :interval "200ms"
-  :initial "<span font_desc=\"Ubuntu Bold 8\">. . .</span>"
-  `./scripts/poll-lyrics.sh`)
+  :initial ". . ."
+  `/home/pakpahan/personal/spotify-lyrics/scripts/poll-lyrics.sh`)
+
+(defpoll track_info
+  :interval "1s"
+  :initial "—"
+  `playerctl --player=spotify metadata --format '{{artist}} — {{title}}'`)
+
+(defpoll pause_icon
+  :interval "1s"
+  :initial "⏸︎"
+  `playerctl --player=spotify status | grep -q Playing && echo "⏸︎" || echo "⏭︎"`)
 
 (defwindow spotify_lyrics_preview
   :monitor 0
@@ -9,22 +19,63 @@
   :namespace "spotify-lyrics-preview"
   :stacking "overlay"
   :exclusive false
-  :focusable "none"
+  :focusable "false"
   :geometry (geometry
-    :anchor "top left"
-    :x "500px"
-    :y "4px"
-    :width "400px"
-    :height "24px")
-  (eventbox
+    :anchor "top center"
+    :x "0px"
+    :y "0px"
+    :width "800px"
+    :height 18px")
+  (box
     :class "spotify-lyrics-root"
+    :orientation "horizontal"
+    :halign "fill"
+    :valign "center"
+    (box
+    :class "left-section"
+  :orientation "horizontal"
+  :spacing 6
+  :hexpand false
+    (image
+      :class "spotify-logo"
+      :path "/home/pakpahan/personal/spotify-lyrics/asset/Spotify_Primary_Logo_RGB_Green.png"
+      :image-width 14
+      :valign "center"
+      :halign "center"
+      :hexpand false
+      :image-height 14)
     (label
-      :class "lyrics-spotify-body"
-      :markup lyrics_preview_text
+      :class "track-info"
+      :text track_info
       :wrap false
       :truncate true
-      :hexpand true
-      :halign "fill"
+      :hexpand false
+      :halign "center"
+      :valign "center")
+    (box
+      :class "controls"
+      :orientation "horizontal"
+      :spacing 0
+      :halign "center"
+      :hexpand false
       :valign "center"
-      :xalign 0
-      :yalign 0.5)))
+      (button
+        :class "control-btn"
+        :onclick "playerctl --player=spotify previous"
+        "⏮︎")
+      (button
+        :class "control-btn"
+        :onclick "playerctl --player=spotify play-pause"
+        pause_icon)
+      (button
+        :class "control-btn"
+        :onclick "playerctl --player=spotify next"
+        "⏭︎")))
+    (label
+        :class "lyrics-text"
+  :markup lyrics_text
+  :wrap false
+  :truncate true
+  :hexpand true
+  :halign "start"
+  :valign "center")))
