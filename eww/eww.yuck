@@ -24,58 +24,58 @@
     :anchor "top center"
     :x "0px"
     :y "0px"
-    :width "800px"
-    :height 18px")
+    :width "600px"
+    :height "24px")
   (box
     :class "spotify-lyrics-root"
     :orientation "horizontal"
     :halign "fill"
     :valign "center"
     (box
-    :class "left-section"
-  :orientation "horizontal"
-  :spacing 6
-  :hexpand false
-    (image
-      :class "spotify-logo"
-      :path "/home/pakpahan/personal/spotify-lyrics/asset/Spotify_Primary_Logo_RGB_Green.png"
-      :image-width 14
-      :valign "center"
-      :halign "center"
-      :hexpand false
-      :image-height 14)
-    (label
-      :class "track-info"
-      :text track_info
-      :wrap false
-      :truncate true
-      :hexpand false
-      :halign "center"
-      :valign "center")
-    (box
-      :class "controls"
-      :orientation "horizontal"
-      :spacing 0
-      :halign "center"
-      :hexpand false
-      :valign "center"
-      (button
-        :class "control-btn"
-        :onclick "playerctl --player=spotify previous"
-        "⏮︎")
-      (button
-        :class "control-btn"
-        :onclick "playerctl --player=spotify play-pause"
-        pause_icon)
-      (button
-        :class "control-btn"
-        :onclick "playerctl --player=spotify next"
-        "⏭︎")))
-    (label
-        :class "lyrics-text"
-  :markup lyrics_text
-  :wrap false
-  :truncate true
-  :hexpand true
-  :halign "start"
-  :valign "center")))
+        :class "left-section"
+        :orientation "horizontal"
+        :spacing 6
+        :hexpand false
+            (image
+                :class "spotify-logo"
+                :path "/home/pakpahan/personal/spotify-lyrics/asset/Spotify_Primary_Logo_RGB_Green.png"
+                :valign "center"
+                :halign "center"
+                :hexpand false
+                :image-width 18
+                :image-height 18)
+            (label
+                :class "track-info"
+                :text track_info
+                :wrap false
+                :truncate true
+                :hexpand false
+                :halign "start"
+                :valign "center")
+            (box
+                :class "controls"
+                :orientation "horizontal"
+                :spacing 0
+                :halign "center"
+                :valign "center"
+                :hexpand false
+                (button
+                    :class "control-btn"
+                    :onclick "playerctl --player=spotify previous"
+                    "⏮︎")
+                (button
+                    :class "control-btn"
+                    :onclick "playerctl --player=spotify play-pause"
+                    pause_icon)
+                (button
+                    :class "control-btn"
+                    :onclick "playerctl --player=spotify next"
+                    "⏭︎")))
+            (label
+                :class "lyrics-text"
+                :markup lyrics_text
+                :wrap false
+                :truncate true
+                :hexpand true
+                :halign "start"
+                :valign "center")))
