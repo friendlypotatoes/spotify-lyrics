@@ -1,5 +1,7 @@
 * {
   all: unset;
+  margin: unset;
+  padding: unset;
 }
 
 window,
@@ -8,10 +10,8 @@ label,
 button,
 image {
   background-color: transparent;
-}
-
-.spotify-lyrics-preview {
-  margin: 0px;
+  margin: unset;
+  padding: unset;
 }
 
 window.spotify-lyrics-preview {
@@ -20,11 +20,8 @@ window.spotify-lyrics-preview {
 
 .spotify-lyrics-root {
   border-radius: 10px;
-  padding: 0px 8px;
-}
-
-.controls {
-  padding: 0px 4px;
+  padding: 0px 0px 8px 0px;
+  margin-bottom: 6px;
 }
 
 .control-btn {
@@ -32,7 +29,7 @@ window.spotify-lyrics-preview {
   background-color: transparent;
   font-family: "Ubuntu", sans-serif;
   font-size: 20px;
-  padding: 0px 10px;
+  padding: 0px 10px 0px 0px;
 }
 
 .control-btn:hover {

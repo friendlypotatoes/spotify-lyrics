@@ -55,9 +55,8 @@
             (box
                 :class "controls"
                 :orientation "horizontal"
-                :spacing 0
                 :halign "center"
-                :valign "center"
+                :valign "start"
                 :hexpand false
                 (button
                     :class "control-btn"
