@@ -1,17 +1,12 @@
 (defpoll lyrics_text
   :interval "200ms"
   :initial ". . ."
-  `/home/pakpahan/personal/spotify-lyrics/scripts/poll-lyrics.sh`)
+  `bash -c '"$HOME/.config/eww/scripts/poll-lyrics.sh"'`)
 
 (defpoll track_info
   :interval "1s"
   :initial "—"
   `playerctl --player=spotify metadata --format '{{artist}} — {{title}}'`)
-
-(defpoll pause_icon
-  :interval "1s"
-  :initial "⏸︎"
-  `playerctl --player=spotify status | grep -q Playing && echo "⏸︎" || echo "⏭︎"`)
 
 (defwindow spotify_lyrics_preview
   :monitor 0
@@ -21,60 +16,44 @@
   :exclusive false
   :focusable "false"
   :geometry (geometry
-    :anchor "top center"
-    :x "0px"
-    :y "0px"
-    :width "600px"
+    :anchor "top left"
+    :x "800px"
+    :y "4px"
     :height "24px")
   (box
     :class "spotify-lyrics-root"
     :orientation "horizontal"
-    :halign "fill"
+    :spacing 6
+    :space-evenly false
+    :halign "start"
     :valign "center"
     (box
-        :class "left-section"
-        :orientation "horizontal"
-        :spacing 6
+      :class "left-section"
+      :orientation "horizontal"
+      :spacing 6
+      :hexpand false
+      (image
+        :class "spotify-logo"
+        :path "$HOME/.config/eww/assets/spotify.svg"
+        :valign "center"
+        :halign "center"
         :hexpand false
-            (image
-                :class "spotify-logo"
-                :path "/home/pakpahan/personal/spotify-lyrics/asset/Spotify_Primary_Logo_RGB_Green.png"
-                :valign "center"
-                :halign "center"
-                :hexpand false
-                :image-width 18
-                :image-height 18)
-            (label
-                :class "track-info"
-                :text track_info
-                :wrap false
-                :truncate true
-                :hexpand false
-                :halign "start"
-                :valign "center")
-            (box
-                :class "controls"
-                :orientation "horizontal"
-                :halign "center"
-                :valign "start"
-                :hexpand false
-                (button
-                    :class "control-btn"
-                    :onclick "playerctl --player=spotify previous"
-                    "⏮︎")
-                (button
-                    :class "control-btn"
-                    :onclick "playerctl --player=spotify play-pause"
-                    pause_icon)
-                (button
-                    :class "control-btn"
-                    :onclick "playerctl --player=spotify next"
-                    "⏭︎")))
-            (label
-                :class "lyrics-text"
-                :markup lyrics_text
-                :wrap false
-                :truncate true
-                :hexpand true
-                :halign "start"
-                :valign "center")))
+        :image-width 14
+        :image-height 14)
+      (label
+        :class "track-info"
+        :text track_info
+        :wrap false
+        :truncate true
+        :width 200
+        :hexpand false
+        :halign "start"
+        :valign "center"))
+    (label
+      :class "lyrics-text"
+      :markup lyrics_text
+      :wrap false
+      :truncate false
+      :hexpand false
+      :halign "start"
+      :valign "center")))

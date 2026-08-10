@@ -297,6 +297,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if not args.foreground and not args.lyrics_file:
+        args.lyrics_file = os.path.expanduser("~/.local/state/spotify-lyrics.txt")
+
     stop = False
 
     def _stop(*_: Any) -> None:

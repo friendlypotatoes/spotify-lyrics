@@ -1,15 +1,17 @@
 # spotify-lyrics
 
-Poll **MPRIS** (via **playerctl**), fetch synced lyrics from **[LRCLIB](https://lrclib.net/docs)**, and either print to the terminal or write **Pango markup** for an **[eww](https://elkowar.github.io/eww/)** strip widget.
+Poll **MPRIS** (via **playerctl**), fetch synced lyrics from **[LRCLIB](https://lrclib.net/docs)**, and display them in an **[eww](https://elkowar.github.io/eww/)** strip (or print to the terminal).
 
 ---
 
 ## What this does
 
-1. **playerctl** watches your Spotify (or any MPRIS-compatible player) for track changes
-2. When a new track plays, it fetches synced lyrics from **LRCLIB**
-3. The lyrics are written to a file (default: `~/.local/state/spotify-lyrics.txt`)
-4. If using eww, the widget reads this file and displays lyrics in a strip
+1. **playerctl** watches Spotify (or any MPRIS player) for track changes
+2. On track change, synced lyrics are fetched from **LRCLIB**
+3. The active lyric line is written to `~/.local/state/spotify-lyrics.txt`
+4. The **eww** widget polls that file and shows track info + lyrics in a top bar
+
+**You need two things running for the eww strip:** the lyrics writer (`main.py`) **and** eww. The widget only reads the file; it does not fetch lyrics itself.
 
 ---
 
@@ -17,134 +19,99 @@ Poll **MPRIS** (via **playerctl**), fetch synced lyrics from **[LRCLIB](https://
 
 | Item | Command to check | Notes |
 |------|------------------|-------|
-| **Python 3.12+** | `python3 --version` | Required. Matches `requires-python` in `pyproject.toml`. |
+| **Python 3.12+** | `python3 --version` | Matches `requires-python` in `pyproject.toml`. |
 | **uv** | `uv --version` | Recommended. Creates `.venv` automatically. |
-| **playerctl** | `playerctl --version` | Must be installed system-wide. |
-| **MPRIS player** | — | Spotify (desktop or Flatpak). |
-| **eww** (optional) | `eww --version` | Only if you want the bar widget. |
-| **Ubuntu font** (optional) | `fc-list \| grep -i ubuntu` | For correct Pango rendering. |
+| **playerctl** | `playerctl --version` | System package. |
+| **MPRIS player** | — | Spotify (desktop or Flatpak). Must be **playing or paused**, not stopped. |
+| **eww** (optional) | `eww --version` | Only for the bar widget. |
+| **Ubuntu font** (optional) | `fc-list \| grep -i ubuntu` | Used in the widget stylesheet. |
 
 ---
 
-## Install (step-by-step)
-
-### 1. Clone the repo
+## Install
 
 ```bash
 git clone https://github.com/your-username/spotify-lyrics.git
 cd spotify-lyrics
-```
 
-### 2. Install uv and Python dependencies
-
-```bash
-# Install uv if not already installed
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# This creates .venv and installs dependencies
+# Python deps
+curl -LsSf https://astral.sh/uv/install.sh | sh   # if needed
 uv sync
-```
 
-### 3. Install system dependencies
-
-**Debian/Ubuntu:**
-
-```bash
+# System deps (Debian/Ubuntu)
 sudo apt install playerctl fonts-ubuntu
+
+# eww: from your distro or https://github.com/elkowar/eww/releases
 ```
 
-**Fedora:**
-
-```bash
-sudo dnf install playerctl
-```
-
-**Arch:**
-
-```bash
-sudo pacman -S playerctl
-```
-
-### 4. Install eww (optional)
-
-From your distro package manager, or download a release from [elkowar/eww](https://github.com/elkowar/eww/releases).
+Fedora: `sudo dnf install playerctl` · Arch: `sudo pacman -S playerctl`
 
 ---
 
-## Running the lyrics writer
+## Eww strip (full setup)
 
-### Quick start
+Do these steps **in order**.
+
+### 1. Make the poll script executable
 
 ```bash
-# Make executable
 chmod +x eww/scripts/poll-lyrics.sh
+```
 
-# Run the main script
+### 2. Symlink eww config
+
+```bash
+# -n: replace ~/.config/eww itself; plain ln -sf would create eww/eww inside the repo
+ln -sfn "$PWD/eww" ~/.config/eww
+```
+
+This makes `~/.config/eww/scripts/poll-lyrics.sh` and `~/.config/eww/assets/spotify.svg` point at this repo. **Do not skip this** — the widget uses those paths.
+
+If you already ran `ln -sf` and see `eww/eww/eww/...` in the repo, delete the nested link and re-run with `-n`:
+
+```bash
+rm -f eww/eww
+ln -sfn "$PWD/eww" ~/.config/eww
+```
+
+### 3. Start the lyrics writer (keep this running)
+
+```bash
+uv run python main.py --player spotify --foreground
+```
+
+Or daemonized (no terminal output):
+
+```bash
 uv run python main.py --player spotify
 ```
 
-This will:
-- Poll Spotify for track changes
-- Fetch lyrics from LRCLIB when tracks change
-- Write lyrics to `~/.local/state/spotify-lyrics.txt`
+In daemon mode, lyrics are written to `~/.local/state/spotify-lyrics.txt` automatically.
 
-### With foreground logging (for debugging)
+**Start Spotify and play a track.** Then verify the file is updating:
 
 ```bash
-uv run python main.py --foreground --player spotify
+cat ~/.local/state/spotify-lyrics.txt
+# should show markup with the current lyric line, not stay empty
+
+~/.config/eww/scripts/poll-lyrics.sh
+# should print the current lyric as plain text
 ```
 
-### Specify custom file path
+If the file stays at `. . .` or "Waiting for player", Spotify is not visible to playerctl — see [Troubleshooting](#troubleshooting).
 
-```bash
-uv run python main.py --player spotify --lyrics-file /path/to/lyrics.txt
-```
+### 4. Start eww and open the window
 
----
-
-## Running eww widget (optional)
-
-The eww widget reads the lyrics file and displays it in a strip.
-
-### Step 1: Make scripts executable
-
-```bash
-chmod +x eww/scripts/poll-lyrics.sh
-```
-
-### Step 2: Point eww to the config directory
-
-Choose **one** method:
-
-**Option A: Symlink (recommended)**
-
-```bash
-ln -sf "$PWD/eww" ~/.config/eww
-```
-
-**Option B: Pass `-c` flag every time**
-
-```bash
-eww -c "$PWD/eww" ...
-```
-
-### Step 3: Start eww daemon
+In a **second terminal**:
 
 ```bash
 eww daemon
-```
-
-### Step 4: Open the lyrics window
-
-```bash
 eww open spotify_lyrics_preview
 ```
 
-You should now see the lyrics strip at the bottom of your screen.
+The strip appears at the **top center** of the screen.
 
-### Step 5: Reload after changes
-
-If you edit `eww.yuck` or `eww.scss`:
+After editing `eww.yuck` or `eww.scss`:
 
 ```bash
 eww reload
@@ -152,86 +119,85 @@ eww reload
 
 ---
 
-## Starting automatically at login
+## Terminal-only mode
 
-### Option A: Systemd user service (recommended)
+No eww, no lyrics file — prints synced lines to stdout:
 
-1. Copy the service file:
+```bash
+uv run python main.py --player spotify --foreground
+```
+
+(`--foreground` skips the lyrics file and daemon fork.)
+
+Custom lyrics file path:
+
+```bash
+uv run python main.py --player spotify --lyrics-file /path/to/lyrics.txt
+```
+
+---
+
+## Start at login
+
+### Lyrics writer (systemd)
 
 ```bash
 mkdir -p ~/.config/systemd/user
 cp contrib/spotify-lyrics-writer.service ~/.config/systemd/user/
-```
-
-2. Edit the service file to fix paths if needed (e.g., adjust `/home/pakpahan/personal/spotify-lyrics` to your actual path).
-
-3. Enable and start:
-
-```bash
+# Edit WorkingDirectory= if your clone is not ~/personal/spotify-lyrics
 systemctl --user daemon-reload
 systemctl --user enable --now spotify-lyrics-writer.service
 ```
 
-4. Check status:
+### Eww window (compositor)
 
-```bash
-systemctl --user status spotify-lyrics-writer.service
-```
-
-### Option B: Shell script in compositor config
-
-Add to your window manager's config (e.g., Hyprland `~/.config/hypr/hyprland.conf`):
+Example Hyprland `exec-once`:
 
 ```bash
 exec-once = ~/personal/spotify-lyrics/contrib/open-eww-lyrics-window.sh
 ```
 
-Make sure the lyrics writer process is running first.
+The writer must be running **before** eww opens the window.
 
 ---
 
 ## Troubleshooting
 
-### "playerctl: command not found"
+### Widget shows only `. . .` or track name but no lyrics
 
-Install playerctl (see Step 3 above).
+1. **Is the writer running?** `pgrep -af 'main.py.*spotify'` — if empty, start step 3 above.
+2. **Is the file updating?** `cat ~/.local/state/spotify-lyrics.txt` while a track plays.
+3. **Did you symlink eww?** `ls -l ~/.config/eww/scripts/poll-lyrics.sh` must point at this repo.
+4. **Is Spotify playing?** `playerctl --player=spotify status` should say `Playing` or `Paused`.
 
-### "No lyrics found"
-
-LRCLIB may not have lyrics for that track. Try searching manually at https://lrclib.net.
-
-### "eww: command not found"
-
-Install eww from your distro or download from [releases](https://github.com/elkowar/eww/releases).
-
-### eww window not showing
-
-1. Check if eww daemon is running: `eww daemon`
-2. Check if the window is open: `eww list-windows`
-3. Try opening again: `eww open spotify_lyrics_preview`
-
-### Lyrics not updating
-
-1. Check if the writer process is running: `ps aux | grep main.py`
-2. Check the lyrics file: `cat ~/.local/state/spotify-lyrics.txt`
-3. Run with `--foreground` to see logs
-
-### Text looks wrong / missing characters
-
-Install the Ubuntu font:
+### `failed to open window spotify_lyrics_preview`
 
 ```bash
-# Debian/Ubuntu
-sudo apt install fonts-ubuntu
+eww daemon
+eww reload
+eww open spotify_lyrics_preview
+eww logs    # read errors
+```
 
-# Or manually download and install
+### `playerctl: command not found`
+
+Install playerctl (see [Install](#install)).
+
+### `No lyrics found` / file has no lyric text
+
+LRCLIB may not have synced lyrics for that track. Check https://lrclib.net manually.
+
+### Text looks wrong
+
+```bash
+sudo apt install fonts-ubuntu
 ```
 
 ---
 
 ## LRCLIB
 
-Lyrics are fetched from the public **[LRCLIB API](https://lrclib.net/docs)** (`/api/get-cached` then `/api/get`). Duration from the player should match the library (about ±2 seconds per their docs).
+Lyrics come from the public **[LRCLIB API](https://lrclib.net/docs)** (`/api/get-cached` then `/api/get`). Track duration from the player should be within about ±2 seconds of the library entry.
 
 ---
 

@@ -19,9 +19,7 @@ window.spotify-lyrics-preview {
 }
 
 .spotify-lyrics-root {
-  border-radius: 10px;
-  padding: 0px 0px 8px 0px;
-  margin-bottom: 6px;
+  padding: 0 10px;
 }
 
 .control-btn {
@@ -36,23 +34,26 @@ window.spotify-lyrics-preview {
   color: #1db954;
 }
 
+.left-section {
+  min-width: 220px;
+}
+
 .track-info {
   color: #b3b3b3;
   font-family: "Ubuntu", sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
 }
 
 .spotify-logo {
-  margin: 0px;
-  margin-bottom: 6px;
+  min-width: 14px;
+  min-height: 14px;
 }
 
 .lyrics-text {
   color: #ffffff;
   font-family: "Ubuntu", sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  margin-left: 8px;
+  letter-spacing: 0.01em;
 }
